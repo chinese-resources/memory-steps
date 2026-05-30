@@ -1,0 +1,5 @@
+Copy the memory_steps folder into Anki's addons21 folder, replacing any previous memory_steps folder. Restart Anki.
+
+For Anki's add-on installer, use dist/memory_steps_0.9.7.ankiaddon after running:
+
+python3 scripts/build_release.py
