@@ -16,7 +16,8 @@ When you import a text, the add-on:
 3. Generates 12 cards for each line.
 4. Starts with only the first card available.
 5. Unlocks the next memory step after the current Anki learning step is completed.
-6. Unlocks the next line after the previous line has been learned.
+6. Suspends completed intermediate steps so only the current ladder step stays active.
+7. Unlocks the next line after the previous line has been learned.
 
 This gives you a controlled path through the text. You are not flooded with every card at once, and you do not have to manually manage which prompt comes next.
 
@@ -183,6 +184,8 @@ Memory Steps will create the notes and cards in Anki. The first line's first ste
 Review the cards normally in Anki.
 
 When you finish the current learning step, Memory Steps unlocks the next memorization step for that same line.
+
+Completed intermediate steps are suspended as you move forward, so Anki does not keep scheduling every prompt in the ladder.
 
 After you complete the final step for a line, Memory Steps marks that line as learned and unlocks the first step of the next line.
 
@@ -451,13 +454,13 @@ You can also open the dashboard and activate a selected or next line manually.
 For normal Anki installation, use:
 
 ```text
-memory_steps_0.9.7.ankiaddon
+memory_steps_0.9.8.ankiaddon
 ```
 
 For manual installation, use:
 
 ```text
-memory_steps_manual_install_0.9.7.zip
+memory_steps_manual_install_0.9.8.zip
 ```
 
 The manual install archive contains the `memory_steps` folder that can be copied into Anki's `addons21` directory.
@@ -476,9 +479,9 @@ python3 scripts/build_release.py
 The build script creates:
 
 ```text
-dist/memory_steps_0.9.7.ankiaddon
-dist/memory_steps_manual_install_0.9.7.zip
-dist/memory_steps_source_bundle_0.9.7_base64.txt
+dist/memory_steps_0.9.8.ankiaddon
+dist/memory_steps_manual_install_0.9.8.zip
+dist/memory_steps_source_bundle_0.9.8_base64.txt
 ```
 
 The `.ankiaddon` archive is built with `__init__.py` at the root of the archive, which is the structure Anki expects for add-on installation.

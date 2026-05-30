@@ -7,7 +7,7 @@ from aqt.utils import showInfo
 from .anki_utils import grouped_collections, activate_note_first_step, reconcile_all_progress
 from .import_dialog import ImportDialog
 from .recite_dialog import ReciteDialog
-HELP_TEXT='Memory Steps v0.9.7: 12-step ladders, layout-aware formatting, dashboard mode column, and learning-step gated unlocks.'
+HELP_TEXT='Memory Steps v0.9.8: 12-step ladders, layout-aware formatting, dashboard mode column, and ladder-mode unlocks.'
 class Dashboard(QDialog):
     def __init__(self,parent=None):
         super().__init__(parent or mw); reconcile_all_progress(); self.setWindowTitle('Memory Steps - Dashboard'); self.resize(1100,650); self.collections=grouped_collections(); self.combo=QComboBox(); self.table=QTableWidget(0,6); self.table.setHorizontalHeaderLabels(['#','Label','Mode','Status','Preview','Note ID']); self.table.setColumnHidden(5,True); self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows); self.table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection); self.summary=QLabel()

@@ -4,7 +4,7 @@ Memory Steps is an Anki desktop add-on for line-by-line memorization. It support
 
 ## Version
 
-`0.9.7`
+`0.9.8`
 
 ## Features
 
@@ -13,7 +13,7 @@ Memory Steps is an Anki desktop add-on for line-by-line memorization. It support
 - English blanks use width-preserving HTML underline spans instead of repeated underscores.
 - Dashboard includes a `Mode` column so duplicate texts with different ladder models are distinguishable.
 - Importer splits numbered text after closing quotes before verse numbers.
-- Step-gated unlocking: the next memory step unlocks after the current Anki learning step graduates.
+- Step-gated unlocking: completed intermediate steps are suspended when the next ladder step unlocks.
 
 ## Build
 
@@ -24,9 +24,9 @@ python3 scripts/build_release.py
 The script creates:
 
 ```text
-dist/memory_steps_0.9.7.ankiaddon
-dist/memory_steps_manual_install_0.9.7.zip
-dist/memory_steps_source_bundle_0.9.7_base64.txt
+dist/memory_steps_0.9.8.ankiaddon
+dist/memory_steps_manual_install_0.9.8.zip
+dist/memory_steps_source_bundle_0.9.8_base64.txt
 ```
 
 ## AnkiWeb note

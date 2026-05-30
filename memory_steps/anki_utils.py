@@ -72,7 +72,10 @@ def find_next_line(note):
 def unlock_next_step_or_line(note,answered_ord):
     answered_ord=int(answered_ord)
     if answered_ord < FINAL_STEP_ORD:
+        suspend_cards(all_card_ids_for_ord(note,answered_ord))
         unsuspend_cards(all_card_ids_for_ord(note,answered_ord+1),0)
+        try: mw.col.reset()
+        except Exception: pass
         return ('step', answered_ord+1, None)
     note['learned']='1'
     try: note.del_tag('ms_unlearned')

@@ -31,7 +31,7 @@ def main() -> None:
     assert_true(compileall.compile_dir(str(ADDON_DIR), quiet=1), "Python syntax check failed")
 
     manifest = json.loads((ADDON_DIR / "manifest.json").read_text(encoding="utf-8"))
-    assert_true(manifest["version"] == "0.9.7", "manifest version should be 0.9.7")
+    assert_true(manifest["version"] == "0.9.8", "manifest version should be 0.9.8")
 
     gen_notes = load_gen_notes()
     normalized = gen_notes.normalize_pasted_text('1 "In the beginning." 2 And then.')

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.8
+
+- Fixed English anchor-word and punctuation-skeleton prompts to use width-preserving word blanks.
+- Improved numbered-text splitting after English and CJK punctuation, including punctuation-adjacent verse numbers.
+- Switched memorization progression to ladder mode by suspending completed intermediate steps.
+
 ## 0.9.7
 
 - Restored deterministic release packaging and smoke-test scripts.
