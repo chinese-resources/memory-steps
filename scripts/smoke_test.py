@@ -57,6 +57,22 @@ def main() -> None:
         cjk_numbered.splitlines() == ["1 起初，神创造天地。", "2 地是空虚混沌；", "3 神说，要有光。"],
         "CJK punctuation-adjacent verse numbers should split",
     )
+    cjk_quoted = gen_notes.normalize_pasted_text(
+        "民数记 1:1-3 新译本\n"
+        "1 以色列人出埃及地以后，第二年二月一日，耶和华在西奈的旷野，"
+        "在会幕里对摩西说：2 “你们要把以色列全体会众，按着他们的宗族、"
+        "父家，根据人名数目，统计人口；所有男丁，都要按着人口登记。"
+        "3 在以色列中，凡是二十岁及以上，能出去打仗的，你和亚伦要按着他们的队伍数点他们。"
+    )
+    assert_true(
+        cjk_quoted.splitlines() == [
+            "民数记 1:1-3 新译本",
+            "1 以色列人出埃及地以后，第二年二月一日，耶和华在西奈的旷野，在会幕里对摩西说：",
+            "2 “你们要把以色列全体会众，按着他们的宗族、父家，根据人名数目，统计人口；所有男丁，都要按着人口登记。",
+            "3 在以色列中，凡是二十岁及以上，能出去打仗的，你和亚伦要按着他们的队伍数点他们。",
+        ],
+        "CJK verse numbers followed by opening quotes should split",
+    )
     label, content = gen_notes.parse_label_content("6起初神创造天地。", 1)
     assert_true((label, content) == ("6", "起初神创造天地。"), "labels without a following space should parse")
 

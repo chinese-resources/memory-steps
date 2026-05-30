@@ -177,9 +177,10 @@ def normalize_pasted_text(text):
     text=text.replace('\r\n','\n').replace('\r','\n').replace('\u3000',' ')
     text=re.sub(r'[ \t]+',' ',text).strip()
     closers = r'["”’\'»」』）\)\]\}]*'
+    openers = r'["“‘\'«「『（\(\[\{]*'
     split_punc = r'[，。！？；：、,.!?;:]'
     verse_label = r'\d{1,3}(?:\s*[:：]\s*\d{1,3})?'
-    text=re.sub(f'({split_punc}{closers})\\s*(?={verse_label}\\s*[\\u3400-\\u4dbf\\u4e00-\\u9fffA-Za-z])', r'\1\n', text)
+    text=re.sub(f'({split_punc}{closers})\\s*(?={verse_label}\\s*{openers}\\s*[\\u3400-\\u4dbf\\u4e00-\\u9fffA-Za-z])', r'\1\n', text)
     return '\n'.join(line.strip() for line in text.split('\n') if line.strip())
 
 def parse_label_content(line, fallback_index):
