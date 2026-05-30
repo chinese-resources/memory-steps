@@ -4,11 +4,17 @@
 from aqt import gui_hooks
 from aqt.utils import tooltip
 from .model import MODEL_NAME
-from .anki_utils import unlock_next_step_or_line, card_completed_anki_learning
+from .anki_utils import unlock_next_step_or_line
 
 def _card_from_args(*args):
     for arg in args:
         if hasattr(arg,'note') and hasattr(arg,'id'):
+            return arg
+    return None
+
+def _ease_from_args(*args):
+    for arg in args:
+        if isinstance(arg,int):
             return arg
     return None
 
@@ -28,8 +34,9 @@ def _reviewer_did_answer_card(*args):
     try:
         note=card.note()
         if _note_type_name(note) != MODEL_NAME or note['learned'] == '1': return
-        if not card_completed_anki_learning(card):
-            tooltip('Keep reviewing this memory step until its Anki learning steps are complete.'); return
+        ease=_ease_from_args(*args)
+        if ease == 1:
+            tooltip('Review this memory step again before moving on.'); return
         result = unlock_next_step_or_line(note,int(getattr(card,'ord',0)))
         status, step, next_note = result[:3]
         deleted = result[3] if len(result) > 3 else 0

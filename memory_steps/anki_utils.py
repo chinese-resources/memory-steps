@@ -12,10 +12,6 @@ def _card_ord(cid):
     try: return int(getattr(_get_card(cid),'ord',0))
     except Exception: return 999
 
-def card_completed_anki_learning(card):
-    try: return int(getattr(card,'type',0)) == 2 or int(getattr(card,'queue',0)) == 2
-    except Exception: return False
-
 def card_ids_by_ord(note):
     out={}
     for cid in note.card_ids(): out.setdefault(_card_ord(cid),[]).append(cid)

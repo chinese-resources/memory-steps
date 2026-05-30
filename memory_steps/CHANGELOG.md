@@ -6,6 +6,7 @@
 - Improved numbered-text splitting after English and CJK punctuation, including punctuation-adjacent verse numbers.
 - Switched memorization progression to ladder mode by suspending completed intermediate steps.
 - Added learned-line cleanup to delete intermediate step cards while keeping the final long-term review card.
+- Changed step advancement to unlock after non-Again answers instead of waiting for Anki learning delays.
 
 ## 0.9.7
 

@@ -11,6 +11,7 @@ Instead of asking you to memorize a whole passage all at once, Memory Steps turn
 
 - Added ladder-mode cleanup: completed intermediate step cards can be deleted after a line is learned, while the final card remains for long-term review.
 - Added a dashboard cleanup button for deleting intermediate step cards from already-learned lines.
+- Changed ladder advancement to move to the next step immediately after a non-Again answer, instead of waiting for Anki's learning delay to graduate the card.
 - Improved numbered text splitting after English and CJK punctuation, including verse numbers followed by opening quotes.
 - Fixed English anchor-word and punctuation-skeleton prompts so they use correctly sized word blanks.
 - Made learned/unlearned progress tags mutually exclusive.
@@ -25,7 +26,7 @@ When you import a text, the add-on:
 2. Detects or uses labels such as verse numbers, line numbers, or section names.
 3. Generates 12 cards for each line.
 4. Starts with only the first card available.
-5. Unlocks the next memory step after the current Anki learning step is completed.
+5. Unlocks the next memory step after a non-Again answer.
 6. Suspends completed intermediate steps so only the current ladder step stays active.
 7. Deletes completed intermediate step cards when the line is learned, keeping the final long-term review card.
 8. Unlocks the next line after the previous line has been learned.
@@ -194,7 +195,7 @@ Memory Steps will create the notes and cards in Anki. The first line's first ste
 
 Review the cards normally in Anki.
 
-When you finish the current learning step, Memory Steps unlocks the next memorization step for that same line.
+When you answer the current step with a non-Again rating, Memory Steps unlocks the next memorization step for that same line.
 
 Completed intermediate steps are suspended as you move forward, so Anki does not keep scheduling every prompt in the ladder.
 
@@ -413,7 +414,7 @@ Yes. Memory Steps is text-agnostic. It works for poetry, speeches, literature, l
 
 ### Why are only some cards available?
 
-That is intentional. Memory Steps suspends future steps until you complete the current learning step. This keeps your memorization path ordered.
+That is intentional. Memory Steps suspends future steps until you answer the current step successfully. This keeps your memorization path ordered.
 
 ### Can I manually activate a line?
 
@@ -457,7 +458,7 @@ Memory Steps uses width-preserving underline spans for hidden words. This is int
 
 ### The next step did not unlock
 
-The next Memory Steps prompt unlocks after Anki's learning step is completed. If the card is still in learning, keep reviewing it normally.
+The next Memory Steps prompt unlocks after a non-Again answer. If you answered Again, review the same step again before moving on.
 
 You can also open the dashboard and activate a selected or next line manually.
 
