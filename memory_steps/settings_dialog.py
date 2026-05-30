@@ -15,10 +15,11 @@ class SettingsDialog(QDialog):
         self.deck=QLineEdit(self.cfg.get('default_deck','Memory Steps')); self.mask=QLineEdit(self.cfg.get('mask','＿'))
         self.mode=QComboBox(); [self.mode.addItem(name) for name in self.cfg.get('memorization_modes',DEFAULT_MODES)]; self.mode.setCurrentText(self.cfg.get('default_memorization_mode','Cloze Word Steps'))
         self.layout=QComboBox(); [self.layout.addItem(name) for name in self.cfg.get('layout_profiles',DEFAULT_LAYOUTS)]; self.layout.setCurrentText(self.cfg.get('default_layout_profile','Auto-detect'))
+        self.cleanup=QCheckBox('Delete completed learning-step cards after a line is learned'); self.cleanup.setChecked(bool(self.cfg.get('delete_intermediate_step_cards_on_learned',True)))
         self.default_profile=QComboBox(); [self.default_profile.addItem(name) for name in self.profiles.keys()]; self.default_profile.setCurrentText(self.cfg.get('default_anchor_profile','General / Mixed Text'))
         self.list=QListWidget(); self.editor=QTextEdit(); self.loading=False; [self.list.addItem(name) for name in self.profiles.keys()]; self.list.currentTextChanged.connect(self.load); self.editor.textChanged.connect(self.changed)
         if self.list.count(): self.list.setCurrentRow(0)
-        form=QFormLayout(); form.addRow('Default deck',self.deck); form.addRow('Mask',self.mask); form.addRow('Default mode',self.mode); form.addRow('Default layout',self.layout); form.addRow('Default anchor profile',self.default_profile)
+        form=QFormLayout(); form.addRow('Default deck',self.deck); form.addRow('Mask',self.mask); form.addRow('Default mode',self.mode); form.addRow('Default layout',self.layout); form.addRow(self.cleanup); form.addRow('Default anchor profile',self.default_profile)
         buttons=QHBoxLayout()
         for name,fn in [('Add',self.add),('Rename',self.rename),('Delete',self.delete),('Export Profiles',self.export_profiles),('Import Profiles',self.import_profiles)]:
             btn=QPushButton(name); btn.clicked.connect(fn); buttons.addWidget(btn)
@@ -58,5 +59,5 @@ class SettingsDialog(QDialog):
         for key,value in profiles.items(): self.profiles[str(key)]=[str(item).strip() for item in (value if isinstance(value,list) else str(value).splitlines()) if str(item).strip()]
         self.refresh_profile_lists(data.get('default_anchor_profile')); showInfo('Imported profiles. Click Save to keep changes.')
     def save(self):
-        self.changed(); self.cfg['default_deck']=self.deck.text().strip() or 'Memory Steps'; self.cfg['mask']=self.mask.text() or '＿'; self.cfg['memorization_modes']=DEFAULT_MODES; self.cfg['layout_profiles']=DEFAULT_LAYOUTS; self.cfg['default_memorization_mode']=self.mode.currentText(); self.cfg['default_layout_profile']=self.layout.currentText(); self.cfg['default_anchor_profile']=self.default_profile.currentText(); self.cfg['anchor_profiles']=self.profiles; mw.addonManager.writeConfig(ADDON_PACKAGE,self.cfg); showInfo('Settings saved.'); self.accept()
+        self.changed(); self.cfg['default_deck']=self.deck.text().strip() or 'Memory Steps'; self.cfg['mask']=self.mask.text() or '＿'; self.cfg['delete_intermediate_step_cards_on_learned']=self.cleanup.isChecked(); self.cfg['memorization_modes']=DEFAULT_MODES; self.cfg['layout_profiles']=DEFAULT_LAYOUTS; self.cfg['default_memorization_mode']=self.mode.currentText(); self.cfg['default_layout_profile']=self.layout.currentText(); self.cfg['default_anchor_profile']=self.default_profile.currentText(); self.cfg['anchor_profiles']=self.profiles; mw.addonManager.writeConfig(ADDON_PACKAGE,self.cfg); showInfo('Settings saved.'); self.accept()
 def open_settings_dialog(): SettingsDialog(mw).exec()

@@ -30,8 +30,10 @@ def _reviewer_did_answer_card(*args):
         if _note_type_name(note) != MODEL_NAME or note['learned'] == '1': return
         if not card_completed_anki_learning(card):
             tooltip('Keep reviewing this memory step until its Anki learning steps are complete.'); return
-        status, step, next_note = unlock_next_step_or_line(note,int(getattr(card,'ord',0)))
-        tooltip(f'Next memorization step unlocked: {step+1}/12' if status=='step' else 'Line learned: '+note['label']+(('\nNext line unlocked: '+next_note['label']) if next_note else ''))
+        result = unlock_next_step_or_line(note,int(getattr(card,'ord',0)))
+        status, step, next_note = result[:3]
+        deleted = result[3] if len(result) > 3 else 0
+        tooltip(f'Next memorization step unlocked: {step+1}/12' if status=='step' else 'Line learned: '+note['label']+(('\nDeleted learning-step cards: '+str(deleted)) if deleted else '')+(('\nNext line unlocked: '+next_note['label']) if next_note else ''))
     except Exception:
         pass
 

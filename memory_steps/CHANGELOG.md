@@ -5,6 +5,7 @@
 - Fixed English anchor-word and punctuation-skeleton prompts to use width-preserving word blanks.
 - Improved numbered-text splitting after English and CJK punctuation, including punctuation-adjacent verse numbers.
 - Switched memorization progression to ladder mode by suspending completed intermediate steps.
+- Added learned-line cleanup to delete intermediate step cards while keeping the final long-term review card.
 
 ## 0.9.7
 

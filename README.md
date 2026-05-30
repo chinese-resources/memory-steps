@@ -5,6 +5,16 @@ Inspired by https://github.com/zefanja/bible-memorizer/ but with a different met
 
 Instead of asking you to memorize a whole passage all at once, Memory Steps turns each line into a sequence of gradually harder prompts. You read the full line first, then review versions with more and more of the text hidden, until you can recall the line from only a reference, label, or minimal cue.
 
+## Brief Changelog
+
+### 0.9.8
+
+- Added ladder-mode cleanup: completed intermediate step cards can be deleted after a line is learned, while the final card remains for long-term review.
+- Added a dashboard cleanup button for deleting intermediate step cards from already-learned lines.
+- Improved numbered text splitting after English and CJK punctuation, including verse numbers followed by opening quotes.
+- Fixed English anchor-word and punctuation-skeleton prompts so they use correctly sized word blanks.
+- Made learned/unlearned progress tags mutually exclusive.
+
 ## What It Does
 
 Memory Steps creates a structured memorization ladder inside Anki.
@@ -17,7 +27,8 @@ When you import a text, the add-on:
 4. Starts with only the first card available.
 5. Unlocks the next memory step after the current Anki learning step is completed.
 6. Suspends completed intermediate steps so only the current ladder step stays active.
-7. Unlocks the next line after the previous line has been learned.
+7. Deletes completed intermediate step cards when the line is learned, keeping the final long-term review card.
+8. Unlocks the next line after the previous line has been learned.
 
 This gives you a controlled path through the text. You are not flooded with every card at once, and you do not have to manually manage which prompt comes next.
 
@@ -187,7 +198,7 @@ When you finish the current learning step, Memory Steps unlocks the next memoriz
 
 Completed intermediate steps are suspended as you move forward, so Anki does not keep scheduling every prompt in the ladder.
 
-After you complete the final step for a line, Memory Steps marks that line as learned and unlocks the first step of the next line.
+After you complete the final step for a line, Memory Steps marks that line as learned, deletes the intermediate learning-step cards for that line, keeps the final card for long-term review, and unlocks the first step of the next line.
 
 This means your review flow looks like:
 
@@ -220,6 +231,7 @@ You can use it to:
 - View each line's label, mode, and preview.
 - Activate a selected line.
 - Activate the next unlearned line.
+- Delete intermediate step cards for already-learned lines.
 - Open the import dialog.
 - Open the practice dialog.
 

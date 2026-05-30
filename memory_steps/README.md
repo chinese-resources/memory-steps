@@ -14,6 +14,7 @@ Memory Steps is an Anki desktop add-on for line-by-line memorization. It support
 - Dashboard includes a `Mode` column so duplicate texts with different ladder models are distinguishable.
 - Importer splits numbered text after closing quotes before verse numbers.
 - Step-gated unlocking: completed intermediate steps are suspended when the next ladder step unlocks.
+- Learned-line cleanup deletes intermediate step cards while keeping the final long-term review card.
 
 ## Build
 

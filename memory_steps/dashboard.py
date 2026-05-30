@@ -3,8 +3,8 @@
 
 from aqt import mw
 from aqt.qt import *
-from aqt.utils import showInfo
-from .anki_utils import grouped_collections, activate_note_first_step, reconcile_all_progress
+from aqt.utils import askUser, showInfo
+from .anki_utils import grouped_collections, activate_note_first_step, cleanup_learned_step_cards, reconcile_all_progress
 from .import_dialog import ImportDialog
 from .recite_dialog import ReciteDialog
 HELP_TEXT='Memory Steps v0.9.8: 12-step ladders, layout-aware formatting, dashboard mode column, and ladder-mode unlocks.'
@@ -14,7 +14,7 @@ class Dashboard(QDialog):
         for cid,notes in self.collections.items(): self.combo.addItem(notes[0]['collection_title'],cid)
         self.combo.currentIndexChanged.connect(self.refresh)
         buttons=[]
-        for label,fn in [('Import Text',self.open_import),('Preview Selected',self.preview_selected),('Activate Selected/Next',self.activate_selected),('Recite / Practice Text',self.open_recite),('Help',self.open_help),('Refresh',self.reload)]:
+        for label,fn in [('Import Text',self.open_import),('Preview Selected',self.preview_selected),('Activate Selected/Next',self.activate_selected),('Clean Learned Steps',self.clean_learned_steps),('Recite / Practice Text',self.open_recite),('Help',self.open_help),('Refresh',self.reload)]:
             btn=QPushButton(label); btn.clicked.connect(fn); buttons.append(btn)
         top=QHBoxLayout(); top.addWidget(QLabel('Collection')); top.addWidget(self.combo,1); top.addWidget(buttons[-1]); row=QHBoxLayout(); [row.addWidget(btn) for btn in buttons[:-1]]; row.addStretch(1)
         layout=QVBoxLayout(); layout.addWidget(self.summary); layout.addLayout(top); layout.addWidget(self.table); layout.addLayout(row); self.setLayout(layout); self.refresh()
@@ -41,6 +41,11 @@ class Dashboard(QDialog):
         note=self.selected_note() or self.next_unlearned_note()
         if not note: showInfo('No line to activate.'); return
         ids=activate_note_first_step(note); showInfo(f'First step activated.\n\nActivated: {note["label"]}\nMode: {note["memorization_mode"]}\nCards activated: {len(ids)}'); self.reload()
+    def clean_learned_steps(self):
+        cid=self.combo.currentData()
+        if not cid: showInfo('No collection selected.'); return
+        if not askUser('Delete completed learning-step cards for learned lines in this collection?\n\nThe final long-term review card for each learned line will be kept.'): return
+        notes,deleted=cleanup_learned_step_cards(cid); showInfo(f'Cleanup complete.\n\nLines cleaned: {notes}\nCards deleted: {deleted}'); self.reload()
     def open_import(self): ImportDialog(self).exec(); self.reload()
     def open_recite(self): ReciteDialog(self).exec()
 def open_dashboard(): Dashboard(mw).exec()
