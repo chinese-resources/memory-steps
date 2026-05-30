@@ -33,6 +33,36 @@ When you import a text, the add-on:
 
 This gives you a controlled path through the text. You are not flooded with every card at once, and you do not have to manually manage which prompt comes next.
 
+
+## Mobile and Sibling-Burying Requirement
+
+Memory Steps currently uses Anki desktop add-on code to advance the ladder after each successful answer. Desktop Anki runs this Python hook; AnkiMobile, AnkiDroid, and AnkiWeb do not run desktop Python add-ons. If you review a Memory Steps card on mobile, the add-on cannot unlock or unbury the next ladder step after the answer.
+
+Because each line is implemented as one Anki note with 12 sibling cards, Anki's sibling-burying feature can hide the remaining ladder steps after you answer one step. For Memory Steps, the deck used for these cards must have sibling burying turned off.
+
+Required deck option for the Memory Steps deck:
+
+```text
+Bury siblings: Do not bury siblings
+```
+
+If your Anki version shows separate burying controls, turn all of these off for the Memory Steps deck/options group:
+
+```text
+Bury new siblings: off
+Bury review siblings: off
+Bury interday learning siblings: off
+```
+
+Recommended workflow for the current desktop-gated ladder mode:
+
+1. Import and activate Memory Steps material on Anki desktop.
+2. Make sure the Memory Steps deck has sibling burying disabled.
+3. Do ladder progression reviews on Anki desktop when you need automatic step unlocking.
+4. If you reviewed on mobile and the next step is hidden, sync back to desktop and use Anki's Unbury action or reactivate the line from the Memory Steps dashboard.
+
+Mobile-safe ladder progression is planned as a separate architecture: instead of unlocking one sibling at a time after each answer, the active line would pre-release all 12 steps in order so mobile clients do not need desktop add-on code between answers.
+
 ## Why Use It?
 
 Memory Steps is designed for people who want exact recall, not just recognition.

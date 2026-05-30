@@ -16,6 +16,29 @@ Memory Steps is an Anki desktop add-on for line-by-line memorization. It support
 - Step-gated unlocking: non-Again answers unlock the next ladder step immediately.
 - Learned-line cleanup deletes intermediate step cards while keeping the final long-term review card.
 
+
+## Mobile / Sibling-Burying Requirement
+
+Memory Steps currently depends on Anki desktop add-on code to unlock the next ladder step after a successful answer. Mobile clients do not run desktop Python add-ons, so mobile reviews cannot trigger automatic step unlocking.
+
+The Memory Steps deck must also have sibling burying disabled, because each line is represented as 12 sibling cards from the same note.
+
+Use this deck option:
+
+```text
+Bury siblings: Do not bury siblings
+```
+
+If your Anki version shows separate controls, turn off all sibling-burying options:
+
+```text
+Bury new siblings: off
+Bury review siblings: off
+Bury interday learning siblings: off
+```
+
+For now, do automatic ladder progression on Anki desktop. If a mobile review buries the remaining ladder steps, sync back to desktop and unbury/reactivate the line.
+
 ## Build
 
 ```bash
