@@ -61,7 +61,13 @@ def keep_every_n(text, n=2, offset=0, mask='＿'):
     return ''.join(out)
 
 def punctuation_skeleton(text, mask='＿'):
-    return ''.join(mask if is_mem_char(char) else char for char in text)
+    out=[]
+    for token in tokens(text):
+        if is_word(token) or is_cjk_token(token):
+            out.append(mask_token(token, mask))
+        else:
+            out.append(token)
+    return ''.join(out)
 
 def chunks(text):
     out=[]; cur=''
@@ -91,7 +97,17 @@ def anchor_prompt(text, keywords=None, mask='＿'):
             if pos < 0: break
             for idx in range(pos, min(pos+len(keyword), len(text))): keep[idx]=True
             start=pos+len(keyword)
-    return ''.join(char if keep[idx] or not is_mem_char(char) else mask for idx,char in enumerate(text))
+    out=[]; pos=0
+    for token in tokens(text):
+        end=pos+len(token)
+        if is_word(token):
+            out.append(token if any(keep[pos:end]) else word_blank(token))
+        elif is_cjk_token(token):
+            out.append(token if keep[pos] else mask)
+        else:
+            out.append(token)
+        pos=end
+    return ''.join(out)
 
 def word_initials(text, mask='＿', every=None, offset=0):
     out=[]; word_idx=0
@@ -161,9 +177,9 @@ def normalize_pasted_text(text):
     text=text.replace('\r\n','\n').replace('\r','\n').replace('\u3000',' ')
     text=re.sub(r'[ \t]+',' ',text).strip()
     closers = r'["”’\'»」』）\)\]\}]*'
-    end_punc = r'[。！？；;.!?]'
-    text=re.sub(f'({end_punc}{closers})\\s*(?=\\d{{1,3}}\\s+[\\u3400-\\u4dbf\\u4e00-\\u9fffA-Za-z])', r'\1\n', text)
-    text=re.sub(f'({end_punc}{closers})\\s*(?=\\d{{1,3}}\\s*[:：]\\s*\\d{{1,3}}\\s+)', r'\1\n', text)
+    split_punc = r'[，。！？；：、,.!?;:]'
+    verse_label = r'\d{1,3}(?:\s*[:：]\s*\d{1,3})?'
+    text=re.sub(f'({split_punc}{closers})\\s*(?={verse_label}\\s*[\\u3400-\\u4dbf\\u4e00-\\u9fffA-Za-z])', r'\1\n', text)
     return '\n'.join(line.strip() for line in text.split('\n') if line.strip())
 
 def parse_label_content(line, fallback_index):
@@ -171,6 +187,7 @@ def parse_label_content(line, fallback_index):
     patterns=[
         r'^(?P<label>\d{1,3}\s*[:：]\s*\d{1,3})\s*(?P<content>.+)$',
         r'^(?P<label>\d{1,3})[\.、\)]?\s+(?P<content>.+)$',
+        r'^(?P<label>\d{1,3})(?=[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaffA-Za-z])(?P<content>.+)$',
         r'^(?P<label>[A-Za-z]+\s*\d{1,3})[:：]?\s+(?P<content>.+)$',
     ]
     for pattern in patterns:

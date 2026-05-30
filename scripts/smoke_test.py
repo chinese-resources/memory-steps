@@ -36,6 +36,29 @@ def main() -> None:
     gen_notes = load_gen_notes()
     normalized = gen_notes.normalize_pasted_text('1 "In the beginning." 2 And then.')
     assert_true(normalized.splitlines() == ['1 "In the beginning."', "2 And then."], "numbered prose split failed")
+    numbers = gen_notes.normalize_pasted_text(
+        "Numbers 1:5-7 NASB\n"
+        "5 These then are the names of the men who shall stand with you: "
+        "of the tribe of Reuben, Elizur the son of Shedeur;6 of the tribe "
+        "of Simeon, Shelumiel the son of Zurishaddai;7 of the tribe of Judah, "
+        "Nahshon the son of Amminadab;"
+    )
+    assert_true(
+        numbers.splitlines() == [
+            "Numbers 1:5-7 NASB",
+            "5 These then are the names of the men who shall stand with you: of the tribe of Reuben, Elizur the son of Shedeur;",
+            "6 of the tribe of Simeon, Shelumiel the son of Zurishaddai;",
+            "7 of the tribe of Judah, Nahshon the son of Amminadab;",
+        ],
+        "punctuation-adjacent verse numbers should split",
+    )
+    cjk_numbered = gen_notes.normalize_pasted_text("1 起初，神创造天地。2 地是空虚混沌；3 神说，要有光。")
+    assert_true(
+        cjk_numbered.splitlines() == ["1 起初，神创造天地。", "2 地是空虚混沌；", "3 神说，要有光。"],
+        "CJK punctuation-adjacent verse numbers should split",
+    )
+    label, content = gen_notes.parse_label_content("6起初神创造天地。", 1)
+    assert_true((label, content) == ("6", "起初神创造天地。"), "labels without a following space should parse")
 
     lines = gen_notes.process_lines(
         "1 In the beginning God created the heaven and the earth.",
@@ -46,7 +69,20 @@ def main() -> None:
     assert_true(len(lines) == 1, "expected one generated line")
     assert_true(lines[0].layout_profile == "layout-latin", "Latin layout was not applied")
     assert_true('class="ms-blank"' in lines[0].step_2, "Cloze blanks were not generated")
+    assert_true('class="ms-blank"' in lines[0].step_10, "Latin punctuation skeleton should use word blanks")
+    assert_true("＿" not in lines[0].step_10, "Latin punctuation skeleton should not use character masks")
     assert_true(len([field for field in lines[0].__dataclass_fields__ if field.startswith("step_") and not field.endswith("_label")]) == 12, "expected 12 steps")
+
+    anchor_lines = gen_notes.process_lines(
+        "1 Now the Lord spoke to Moses.",
+        "Numbers",
+        memorization_mode="Cloze Word Steps",
+        keywords=["Lord"],
+        layout_request="Latin word layout",
+    )
+    assert_true("Lord" in anchor_lines[0].step_8, "Anchor word should stay visible")
+    assert_true('class="ms-blank"' in anchor_lines[0].step_8, "Latin anchor prompt should use word blanks")
+    assert_true("＿" not in anchor_lines[0].step_8, "Latin anchor prompt should not use character masks")
 
     print("smoke tests passed")
 
