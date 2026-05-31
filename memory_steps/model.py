@@ -112,7 +112,7 @@ def front_template():
         '<div class="player" id="ms-player"><div class="player-top"><span class="badge" id="ms-mode">Training mode</span><span class="badge" id="ms-count">Step 1 / 12</span></div>'
         '<div class="step-title" id="ms-label">{{step_1_label}}</div><div class="versebox {{layout_profile}}" id="ms-prompt">{{step_1}}</div>'
         '<div class="controls"><button type="button" class="ms-btn primary" id="ms-recall">Recall</button><button type="button" class="ms-btn primary" id="ms-train">Train</button><button type="button" class="ms-btn" id="ms-hint">Easier ←</button><button type="button" class="ms-btn" id="ms-harder">Next →</button><button type="button" class="ms-btn check" id="ms-check">Check</button></div>'
-        '<div class="keyboard-help">No desktop hotkeys are assigned, to avoid conflicts with Anki shortcuts.</div></div>'
+        '</div>'
         + _step_sources() + _fallback_hints() + _player_script() + '{{#front_context}}<div class="context"><b>Previous:</b><br>{{front_context}}</div>{{/front_context}}</div>')
 
 def back_template():
