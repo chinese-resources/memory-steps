@@ -4,13 +4,21 @@ Memory Steps is an Anki add-on for memorizing exact texts line by line: Scriptur
 
 Instead of asking you to memorize a whole passage at once, Memory Steps splits your text into lines and gives each line a 12-step memorization ladder.
 
-## What’s New in 1.0.0
+## What’s New in 1.0.1
 
-Version 1.0.0 introduces the **Universal Ladder Player**.
+Version 1.0.1 is a mobile usability fix for the Universal Ladder Player.
 
-Older versions created 12 separate sibling cards per line. That worked well on desktop, but caused problems on mobile because mobile clients do not run desktop add-on hooks.
+It keeps the one-card-per-line architecture from 1.0.0, but improves the card template on mobile:
 
-The new version creates:
+- The player starts in **Training Mode** at **Step 1**.
+- The mobile layout is more compact.
+- The controls stay visible above the prompt.
+- Long prompts scroll inside the prompt area instead of pushing the buttons off-screen.
+- No desktop hotkeys are assigned, to avoid conflicts with Anki shortcuts.
+
+## Universal Ladder Player
+
+The current version creates:
 
 ```text
 1 Anki card per line
@@ -37,7 +45,19 @@ Step 1  = easiest / most visible
 Step 12 = hardest / minimal cue
 ```
 
-You can use the player in two ways: **Recall Mode** and **Training Mode**.
+You can use the player in two ways: **Training Mode** and **Recall Mode**.
+
+## Training Mode
+
+Training Mode is the default starting mode.
+
+Use **Train** for first-time learning or extra practice. Training Mode walks you upward through the ladder:
+
+```text
+prompt → check full line → harder prompt → check full line → even harder prompt
+```
+
+This lets you attempt each step, reveal the full line to check your answer, then continue to a harder prompt.
 
 ## Recall Mode
 
@@ -59,18 +79,6 @@ Good  = needed a small hint
 Hard  = needed several hints
 Again = needed the full answer
 ```
-
-## Training Mode
-
-Use **Train** for first-time learning or extra practice.
-
-Training Mode walks you upward through the ladder:
-
-```text
-prompt → check full line → harder prompt → check full line → even harder prompt
-```
-
-This lets you attempt each step, reveal the full line to check your answer, then continue to a harder prompt.
 
 ## Check Full Line
 
@@ -118,7 +126,7 @@ Because the ladder is inside the card template, the review experience works on m
 
 ## Legacy Notes
 
-Version 1.0.0 uses a new note type:
+Version 1.0.1 uses this note type:
 
 ```text
 Memory Steps: Universal Ladder
@@ -130,7 +138,7 @@ Older versions used:
 Memory Steps: Line-by-Line Memorizer
 ```
 
-Old notes are not automatically migrated. For the best mobile-safe experience, re-import your texts with version 1.0.0 or later.
+Old notes are not automatically migrated. For the best mobile-safe experience, re-import your texts with version 1.0.1 or later.
 
 ## Build From Source
 
@@ -143,10 +151,10 @@ python3 scripts/build_release.py
 This creates:
 
 ```text
-dist/memory_steps_1.0.0.ankiaddon
-dist/memory_steps_manual_install_1.0.0.zip
-dist/memory_steps_source_bundle_1.0.0.zip
-dist/memory_steps_source_bundle_1.0.0_base64.txt
+dist/memory_steps_1.0.1.ankiaddon
+dist/memory_steps_manual_install_1.0.1.zip
+dist/memory_steps_source_bundle_1.0.1.zip
+dist/memory_steps_source_bundle_1.0.1_base64.txt
 ```
 
 Run the smoke test with:
