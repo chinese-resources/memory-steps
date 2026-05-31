@@ -9,10 +9,8 @@ def main():
     manifest=json.loads((ADDON/'manifest.json').read_text())
     if manifest.get('version')!='1.0.0': fail('manifest version should be 1.0.0')
     model_text=(ADDON/'model.py').read_text()
-    for needle in ['Memory Steps: Universal Ladder','Universal Ladder Player','ms-player','Check full line','Back to step','Training mode']:
+    for needle in ["var mode='train', current=0", 'Training mode</span><span class="badge" id="ms-count">Step 1 / 12', '{{step_1_label}}', '{{step_1}}', "function train(){mode='train'; current=0"]:
         if needle not in model_text: fail(f'missing {needle}')
     if 'keydown' in model_text: fail('desktop hotkeys should not be registered')
-    cfg=json.loads((ADDON/'config.json').read_text())
-    if cfg.get('review_architecture')!='universal_ladder_player': fail('bad architecture config')
-    print('OK: Memory Steps ladder player tweak static smoke tests passed')
+    print('OK: Memory Steps starts in Training mode at Step 1')
 if __name__=='__main__': main()

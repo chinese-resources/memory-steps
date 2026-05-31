@@ -38,10 +38,12 @@ def _upsert_template(col, model, name, qfmt, afmt):
     template = _template_by_name(model, name)
     if template is None:
         template = col.models.new_template(name)
-        template["qfmt"] = qfmt; template["afmt"] = afmt
+        template["qfmt"] = qfmt
+        template["afmt"] = afmt
         col.models.addTemplate(model, template)
     else:
-        template["qfmt"] = qfmt; template["afmt"] = afmt
+        template["qfmt"] = qfmt
+        template["afmt"] = afmt
     return template
 
 def _remove_extra_templates(model):
@@ -60,7 +62,13 @@ def _step_sources():
 def _fallback_hints():
     blocks = ['<div class="fallback"><div class="prompt-label fallback-title">Fallback progressive hints</div>']
     for idx in range(11, 0, -1):
-        blocks.append('<details class="hint">' + f'<summary>Hint: {{{{step_{idx}_label}}}}</summary>' + '<div class="hint-body">' + f'<div class="versebox {{{{layout_profile}}}}">{{{{step_{idx}}}}}</div>' + '</div></details>')
+        blocks.append(
+            '<details class="hint">'
+            + f'<summary>Hint: {{{{step_{idx}_label}}}}</summary>'
+            + '<div class="hint-body">'
+            + f'<div class="versebox {{{{layout_profile}}}}">{{{{step_{idx}}}}}</div>'
+            + '</div></details>'
+        )
     blocks.append('</div>')
     return ''.join(blocks)
 
@@ -75,29 +83,42 @@ def _player_script():
   var steps=nodes.map(function(n){return {label:n.getAttribute('data-label')||'',html:n.innerHTML||''};});
   var answerNode=document.getElementById('ms-answer-source');
   var answerHtml=answerNode ? answerNode.innerHTML : (steps[0] ? steps[0].html : '');
-  var mode='recall', current=11, checking=false;
+  var mode='train', current=0, checking=false, advanceAfterCheck=false;
   var modeEl=document.getElementById('ms-mode'), countEl=document.getElementById('ms-count'), labelEl=document.getElementById('ms-label'), promptEl=document.getElementById('ms-prompt'), hintBtn=document.getElementById('ms-hint'), harderBtn=document.getElementById('ms-harder'), checkBtn=document.getElementById('ms-check');
   function clamp(n){return Math.max(0,Math.min(11,n));}
   function render(){
     current=clamp(current); var step=steps[current]||{label:'',html:''};
     if(checking){
       player.classList.add('checking'); modeEl.classList.add('checking');
-      modeEl.textContent='Checking full line'; countEl.textContent='Answer'; labelEl.textContent='Full line / answer'; promptEl.innerHTML=answerHtml;
-      checkBtn.textContent='Back to step'; hintBtn.disabled=true; harderBtn.disabled=true; return;
+      modeEl.textContent=advanceAfterCheck?'Training check':'Checking full line';
+      countEl.textContent='Answer'; labelEl.textContent='Full line / answer'; promptEl.innerHTML=answerHtml;
+      hintBtn.textContent='Back to step';
+      harderBtn.textContent=advanceAfterCheck?'Continue to next step →':'Back to step';
+      checkBtn.textContent=advanceAfterCheck?'Continue to next step':'Back to step';
+      return;
     }
-    player.classList.remove('checking'); modeEl.classList.remove('checking'); hintBtn.disabled=false; harderBtn.disabled=false;
-    modeEl.textContent=mode==='recall'?'Recall mode':'Training mode'; countEl.textContent='Step '+(current+1)+' / 12'; labelEl.textContent=step.label; promptEl.innerHTML=step.html;
-    hintBtn.textContent=mode==='recall'?'Need hint ←':'Easier ←'; harderBtn.textContent=mode==='recall'?'Harder →':'Next harder →'; checkBtn.textContent='Check full line';
+    player.classList.remove('checking'); modeEl.classList.remove('checking');
+    modeEl.textContent=mode==='recall'?'Recall mode':'Training mode';
+    countEl.textContent='Step '+(current+1)+' / 12';
+    labelEl.textContent=step.label; promptEl.innerHTML=step.html;
+    hintBtn.textContent=mode==='recall'?'Need hint ←':'Easier ←';
+    harderBtn.textContent=mode==='recall'?'Harder →':'Next harder →';
+    checkBtn.textContent='Check full line';
   }
-  function recall(){mode='recall'; current=11; checking=false; render();}
-  function train(){mode='train'; current=1; checking=false; render();}
-  function easier(){if(checking){return;} current-=1; render();}
-  function harder(){if(checking){return;} current+=1; render();}
-  function toggleCheck(){checking=!checking; render();}
+  function backToStep(){checking=false; advanceAfterCheck=false; render();}
+  function continueToNext(){checking=false; advanceAfterCheck=false; current+=1; render();}
+  function recall(){mode='recall'; current=11; checking=false; advanceAfterCheck=false; render();}
+  function train(){mode='train'; current=0; checking=false; advanceAfterCheck=false; render();}
+  function easier(){if(checking){backToStep(); return;} current-=1; render();}
+  function harder(){if(checking){advanceAfterCheck ? continueToNext() : backToStep(); return;} current+=1; render();}
+  function toggleCheck(){
+    if(checking){advanceAfterCheck ? continueToNext() : backToStep(); return;}
+    checking=true; advanceAfterCheck=false; render();
+  }
   function nextTrain(){
-    if(mode!=='train'){harder(); return;}
-    if(checking){checking=false; current+=1; render();}
-    else{checking=true; render();}
+    if(checking){advanceAfterCheck ? continueToNext() : backToStep(); return;}
+    if(mode==='train'){checking=true; advanceAfterCheck=true; render(); return;}
+    harder();
   }
   document.getElementById('ms-recall').addEventListener('click',recall);
   document.getElementById('ms-train').addEventListener('click',train);
@@ -110,21 +131,27 @@ def _player_script():
 """
 
 def front_template():
-    return ('<div class="wrap"><div class="title">{{collection_title}}</div><div class="reference">{{label}}</div><div class="meta">{{memorization_mode}} · {{anchor_profile}}</div>'
-        '<div class="instructions"><b>Use the ladder player.</b> Recall starts hard. Training alternates prompt → check full line → harder prompt → check full line.</div>'
-        '<div class="player" id="ms-player"><div class="player-top"><span class="badge" id="ms-mode">Recall mode</span><span class="badge" id="ms-count">Step 12 / 12</span></div>'
-        '<div class="step-title" id="ms-label">{{step_12_label}}</div><div class="versebox {{layout_profile}}" id="ms-prompt">{{step_12}}</div>'
+    return (
+        '<div class="wrap"><div class="title">{{collection_title}}</div><div class="reference">{{label}}</div><div class="meta">{{memorization_mode}} · {{anchor_profile}}</div>'
+        '<div class="instructions"><b>Use the ladder player.</b> Training starts by default and alternates prompt → check full line → continue to next step. Use Recall for normal review from the hardest cue.</div>'
+        '<div class="player" id="ms-player"><div class="player-top"><span class="badge" id="ms-mode">Training mode</span><span class="badge" id="ms-count">Step 1 / 12</span></div>'
+        '<div class="step-title" id="ms-label">{{step_1_label}}</div><div class="versebox {{layout_profile}}" id="ms-prompt">{{step_1}}</div>'
         '<div class="controls"><button type="button" class="ms-btn primary" id="ms-recall">Recall</button><button type="button" class="ms-btn primary" id="ms-train">Train</button><button type="button" class="ms-btn" id="ms-hint">Need hint ←</button><button type="button" class="ms-btn" id="ms-harder">Harder →</button><button type="button" class="ms-btn check" id="ms-check">Check full line</button></div>'
         '<div class="keyboard-help">No desktop hotkeys are assigned, to avoid conflicts with Anki shortcuts.</div></div>'
-        + _step_sources() + _fallback_hints() + _player_script() + '{{#front_context}}<div class="context"><b>Previous:</b><br>{{front_context}}</div>{{/front_context}}</div>')
+        + _step_sources() + _fallback_hints() + _player_script()
+        + '{{#front_context}}<div class="context"><b>Previous:</b><br>{{front_context}}</div>{{/front_context}}</div>'
+    )
 
 def back_template():
-    return ('{{FrontSide}}<hr><div class="wrap"><div class="prompt-label">Answer / complete text</div><div class="versebox {{layout_profile}}">{{answer}}</div>{{#audio}}<div class="audio">{{audio}}</div>{{/audio}}'
+    return (
+        '{{FrontSide}}<hr><div class="wrap"><div class="prompt-label">Answer / complete text</div><div class="versebox {{layout_profile}}">{{answer}}</div>{{#audio}}<div class="audio">{{audio}}</div>{{/audio}}'
         '<div class="grading"><b>Suggested grading</b><br><b>Easy</b>: recalled from the primary cue with confidence.<br><b>Good</b>: recalled with a small hint or minor hesitation.<br><b>Hard</b>: needed several hints but eventually recalled it.<br><b>Again</b>: needed the full answer or could not recite accurately.</div>'
-        '{{#back_context}}<div class="context"><b>Next:</b><br>{{back_context}}</div>{{/back_context}}</div>')
+        '{{#back_context}}<div class="context"><b>Next:</b><br>{{back_context}}</div>{{/back_context}}</div>'
+    )
 
 def ensure_model(col):
-    model = col.models.by_name(MODEL_NAME); existed = model is not None
+    model = col.models.by_name(MODEL_NAME)
+    existed = model is not None
     if model:
         existing = {field["name"] for field in model["flds"]}
         for field_name in FIELDS:
@@ -134,7 +161,11 @@ def ensure_model(col):
         model = col.models.new(MODEL_NAME)
         for field_name in FIELDS:
             col.models.addField(model, col.models.new_field(field_name))
-    model["css"] = CSS; _remove_extra_templates(model); _upsert_template(col, model, TEMPLATE_NAME, front_template(), back_template())
-    if existed: col.models.save(model)
-    else: col.models.add(model)
+    model["css"] = CSS
+    _remove_extra_templates(model)
+    _upsert_template(col, model, TEMPLATE_NAME, front_template(), back_template())
+    if existed:
+        col.models.save(model)
+    else:
+        col.models.add(model)
     return model
