@@ -1,0 +1,6 @@
+diff --git a/memory_steps/model.py b/memory_steps/model.py
+--- a/memory_steps/model.py
++++ b/memory_steps/model.py
+@@
+-        '<div class="instructions"><b>Use the ladder player.</b> Training starts by default and alternates prompt → check full line → continue to next step. On mobile, the controls stay compact and the prompt area scrolls when needed. Use Recall for normal review from the hardest cue.</div>'
+         '<div class="player" id="ms-player"><div class="player-top"><span class="badge" id="ms-mode">Training mode</span><span class="badge" id="ms-count">Step 1 / 12</span></div>'
