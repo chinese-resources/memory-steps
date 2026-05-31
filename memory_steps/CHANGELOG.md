@@ -4,11 +4,11 @@
 
 - Rebuilt Memory Steps around a Universal Ladder Player architecture.
 - Changed imports to generate one Anki card per line instead of 12 sibling cards.
-- Embedded all 12 memorization prompts inside the card template.
-- Added in-card Recall mode, Training mode, tap controls, desktop keyboard shortcuts, and fallback progressive hints.
+- Added in-card Recall mode and Training mode.
+- Updated Training mode to alternate prompt → check full line → harder prompt → check full line.
+- Changed full-line checking so it reveals the answer without changing the current ladder step.
+- Removed desktop hotkeys to avoid conflicts with Anki shortcuts.
 - Removed desktop-only post-answer step unlocking from the review path.
-- Removed the need for sibling-burying workarounds in new universal imports.
-- Added a new note type: `Memory Steps: Universal Ladder`.
 
 ## 0.9.8
 

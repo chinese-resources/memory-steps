@@ -3,22 +3,19 @@
 from aqt import mw
 from aqt.qt import *
 from aqt.utils import showInfo
-from .anki_utils import grouped_collections, reconcile_all_progress, reorder_new_cards, set_progress_state
+from .anki_utils import grouped_collections,reconcile_all_progress,reorder_new_cards,set_progress_state
 from .import_dialog import ImportDialog
 from .recite_dialog import ReciteDialog
 HELP_TEXT="""Memory Steps Universal Ladder Player
 
-One Anki card per line. The card has Recall mode, Training mode, mobile tap controls, desktop keyboard shortcuts, and fallback progressive hints.
-
-Grade by how much help you needed: Easy = no hint, Good = small hint, Hard = several hints, Again = full answer needed.
+One card per line. Recall starts hard. Training alternates prompt → check full line → harder prompt → check full line. No desktop hotkeys are assigned, to avoid Anki shortcut conflicts.
 """
 class Dashboard(QDialog):
     def __init__(self,parent=None):
         super().__init__(parent or mw); reconcile_all_progress(); self.setWindowTitle("Memory Steps - Dashboard"); self.resize(1100,650); self.collections=grouped_collections(); self.combo=QComboBox(); self.table=QTableWidget(0,6); self.table.setHorizontalHeaderLabels(["#","Label","Mode","Status","Preview","Note ID"]); self.table.setColumnHidden(5,True); self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows); self.table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection); self.summary=QLabel()
         for cid,notes in self.collections.items(): self.combo.addItem(notes[0]["collection_title"],cid)
         self.combo.currentIndexChanged.connect(self.refresh); buttons=[]
-        for label,fn in [("Import Text",self.open_import),("Preview Selected",self.preview_selected),("Reorder New Cards",self.reorder_cards),("Mark Learned",self.mark_selected_learned),("Mark Unlearned",self.mark_selected_unlearned),("Recite / Practice Text",self.open_recite),("Help",self.open_help),("Refresh",self.reload)]:
-            btn=QPushButton(label); btn.clicked.connect(fn); buttons.append(btn)
+        for label,fn in [("Import Text",self.open_import),("Preview Selected",self.preview_selected),("Reorder New Cards",self.reorder_cards),("Mark Learned",self.mark_selected_learned),("Mark Unlearned",self.mark_selected_unlearned),("Recite / Practice Text",self.open_recite),("Help",self.open_help),("Refresh",self.reload)]: btn=QPushButton(label); btn.clicked.connect(fn); buttons.append(btn)
         top=QHBoxLayout(); top.addWidget(QLabel("Collection")); top.addWidget(self.combo,1); top.addWidget(buttons[-1]); row=QHBoxLayout(); [row.addWidget(btn) for btn in buttons[:-1]]; row.addStretch(1)
         layout=QVBoxLayout(); layout.addWidget(self.summary); layout.addLayout(top); layout.addWidget(self.table); layout.addLayout(row); self.setLayout(layout); self.refresh()
     def open_help(self): showInfo(HELP_TEXT)

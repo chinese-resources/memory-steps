@@ -3,15 +3,15 @@
 from aqt import mw
 from aqt.qt import *
 from aqt.utils import showInfo
-from .anki_utils import reorder_new_cards, set_progress_state
-from .gen_notes import context_for, normalize_pasted_text, process_lines
+from .anki_utils import reorder_new_cards,set_progress_state
+from .gen_notes import context_for,normalize_pasted_text,process_lines
 from .model import ensure_model
 class ImportDialog(QDialog):
     def __init__(self,parent=None):
         super().__init__(parent or mw); self.setWindowTitle("Memory Steps - Import Text"); self.resize(940,760); cfg=mw.addonManager.getConfig(__name__.split(".")[0]) or {}
         self.title=QLineEdit(); self.title.setPlaceholderText("e.g., Psalm 23 / John 3 / 静夜思")
         self.deck=QComboBox(); did=mw.col.decks.id(cfg.get("default_deck","Memory Steps"))
-        for deck in sorted(mw.col.decks.all_names_and_ids(), key=lambda deck: deck.name.lower()): self.deck.addItem(deck.name, deck.id)
+        for deck in sorted(mw.col.decks.all_names_and_ids(),key=lambda deck:deck.name.lower()): self.deck.addItem(deck.name,deck.id)
         idx=self.deck.findData(did); self.deck.setCurrentIndex(idx if idx>=0 else 0)
         self.mode=QComboBox(); [self.mode.addItem(n) for n in cfg.get("memorization_modes",["CJK Character Steps","Word Initial Steps","Word Outline Steps","Cloze Word Steps"])] ; self.mode.setCurrentText(cfg.get("default_memorization_mode","Cloze Word Steps"))
         self.layout=QComboBox(); [self.layout.addItem(n) for n in cfg.get("layout_profiles",["Auto-detect","CJK character layout","Latin word layout","Mixed layout"])] ; self.layout.setCurrentText(cfg.get("default_layout_profile","Auto-detect"))
@@ -21,7 +21,7 @@ class ImportDialog(QDialog):
         form=QFormLayout(); form.addRow("Text title / collection",self.title); form.addRow("Deck",self.deck); form.addRow("Memorization mode",self.mode); form.addRow("Text layout",self.layout); form.addRow("Anchor-word profile",self.profile); form.addRow("Context window",self.window); form.addRow("",self.auto)
         split=QPushButton("Preview / Split Lines"); split.clicked.connect(self.preview_split); imp=QPushButton("Import"); imp.clicked.connect(self.import_text); cancel=QPushButton("Cancel"); cancel.clicked.connect(self.reject)
         buttons=QHBoxLayout(); buttons.addWidget(split); buttons.addStretch(1); buttons.addWidget(imp); buttons.addWidget(cancel)
-        layout=QVBoxLayout(); layout.addLayout(form); layout.addWidget(QLabel("Universal Ladder Player: one Anki card per line, with a smooth in-card step player for desktop and mobile.")); layout.addWidget(self.text); layout.addWidget(self.preview); layout.addLayout(buttons); self.setLayout(layout)
+        layout=QVBoxLayout(); layout.addLayout(form); layout.addWidget(QLabel("Universal Ladder Player: one card per line. Training alternates prompt and full-line check.")); layout.addWidget(self.text); layout.addWidget(self.preview); layout.addLayout(buttons); self.setLayout(layout)
     def preview_split(self): self.preview.setPlainText(normalize_pasted_text(self.text.toPlainText()) if self.auto.isChecked() else self.text.toPlainText())
     def import_text(self):
         raw=self.text.toPlainText().strip(); title=self.title.text().strip() or "Memorization Text"
@@ -35,6 +35,6 @@ class ImportDialog(QDialog):
             for field,value in zip(fields,values): note[field]=str(value)
             prev_ctx,next_ctx=context_for(data,item.line_index,self.window.value()); note["front_context"]=prev_ctx; note["back_context"]=next_ctx; note["learned"]="0"; note["id"]=f"{item.collection_id}-{item.line_index}"
             note.add_tag("memory_steps"); note.add_tag("ms_unlearned"); note.add_tag("ms_universal"); note.add_tag("ms_ladder_player")
-            mw.col.add_note(note,did); set_progress_state(note,False); card_count += len(note.card_ids()); note_count += 1
+            mw.col.add_note(note,did); set_progress_state(note,False); card_count+=len(note.card_ids()); note_count+=1
         changed=reorder_new_cards(data[0].collection_id if data else None)
         showInfo("Import successful.\n\n"+f"Lines created: {note_count}\nCards created: {card_count}\nNew cards ordered: {changed}\nArchitecture: Universal Ladder Player, one card per line\nMode: {self.mode.currentText()}\nLayout: {self.layout.currentText()}"); self.accept()
