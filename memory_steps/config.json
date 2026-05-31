@@ -2,7 +2,6 @@
   "default_deck": "Memory Steps",
   "mask": "＿",
   "completion_rule": "step_gated_after_anki_learning_complete",
-  "delete_intermediate_step_cards_on_learned": true,
   "default_memorization_mode": "Cloze Word Steps",
   "memorization_modes": [
     "CJK Character Steps",
@@ -162,5 +161,6 @@
     "I",
     "you",
     "we"
-  ]
+  ],
+  "review_architecture": "universal_ladder_player"
 }

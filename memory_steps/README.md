@@ -1,43 +1,39 @@
-# Memory Steps: Line-by-Line Memorizer
+# Memory Steps: Universal Ladder Player
 
-Memory Steps is an Anki desktop add-on for line-by-line memorization. It supports 12-step memory ladders for CJK character memorization, English word initials, English word outlines, and cloze-style word hiding.
+Memory Steps is an Anki add-on for line-by-line memorization of Scripture, poems, speeches, quotations, language-learning passages, and other texts where exact wording matters.
 
-## Version
+## What changed in 1.0.0
 
-`0.9.8`
+Memory Steps now uses a **Universal Ladder Player** architecture:
 
-## Features
+- One Anki card is generated for each line of text.
+- The 12 memorization steps are embedded inside that card.
+- The front template includes an interactive ladder player with Recall mode and Training mode.
+- There are no sibling step cards to bury.
+- There is no desktop-only post-answer unlock hook.
+- The same review flow works on Anki desktop, AnkiMobile, AnkiDroid, and AnkiWeb.
 
-- 12-step memorization ladders.
-- CJK, Latin, and Mixed layout profiles.
-- English blanks use width-preserving HTML underline spans instead of repeated underscores.
-- Dashboard includes a `Mode` column so duplicate texts with different ladder models are distinguishable.
-- Importer splits numbered text after closing quotes before verse numbers.
-- Step-gated unlocking: non-Again answers unlock the next ladder step immediately.
-- Learned-line cleanup deletes intermediate step cards while keeping the final long-term review card.
+## Review workflow
 
+Use **Recall** for normal review: it starts with the hardest cue. Tap **Need hint** only when needed.
 
-## Mobile / Sibling-Burying Requirement
+Use **Train** for first-time learning: it starts with the full line and moves toward harder prompts.
 
-Memory Steps currently depends on Anki desktop add-on code to unlock the next ladder step after a successful answer. Mobile clients do not run desktop Python add-ons, so mobile reviews cannot trigger automatic step unlocking.
+Desktop keys: `H`/left arrow = easier hint, `L`/right arrow = harder prompt, `R` = Recall, `T` = Train, `F` = Full line.
 
-The Memory Steps deck must also have sibling burying disabled, because each line is represented as 12 sibling cards from the same note.
+Grade honestly: Easy = no hint, Good = small hint, Hard = several hints, Again = full answer needed.
 
-Use this deck option:
+## Why this works on mobile
 
-```text
-Bury siblings: Do not bury siblings
-```
+The ladder is part of the synced card template and note fields. Anki schedules one card per line. No Python code needs to run after an answer, and no future step card needs to be unburied or unsuspended.
 
-If your Anki version shows separate controls, turn off all sibling-burying options:
+## Importing text
 
-```text
-Bury new siblings: off
-Bury review siblings: off
-Bury interday learning siblings: off
-```
+Use `Tools → Memory Steps → Import Text` in Anki desktop. Each imported line becomes one card. New cards are ordered by line number. Sync to mobile after importing if desired.
 
-For now, do automatic ladder progression on Anki desktop. If a mobile review buries the remaining ladder steps, sync back to desktop and unbury/reactivate the line.
+## Legacy notes
+
+Version 1.0.0 creates a new note type named `Memory Steps: Universal Ladder`. Older imports used `Memory Steps: Line-by-Line Memorizer` and are not automatically migrated. For the cleanest mobile-safe experience, re-import texts with version 1.0.0 or later.
 
 ## Build
 
@@ -45,14 +41,8 @@ For now, do automatic ladder progression on Anki desktop. If a mobile review bur
 python3 scripts/build_release.py
 ```
 
-The script creates:
+This creates `dist/memory_steps_1.0.0.ankiaddon`, a manual install zip, and source-bundle files.
 
-```text
-dist/memory_steps_0.9.8.ankiaddon
-dist/memory_steps_manual_install_0.9.8.zip
-dist/memory_steps_source_bundle_0.9.8_base64.txt
-```
+## License
 
-## AnkiWeb note
-
-The `.ankiaddon` archive is intentionally built with `__init__.py` at the root of the archive, not inside a top-level `memory_steps/` folder.
+GPL-3.0-or-later.
