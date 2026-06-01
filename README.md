@@ -1,13 +1,25 @@
-# Remove hotkey text patch
+# Robust removal patch for card helper text
 
-This patch removes the visible card text:
+The previous patch did not work because `memory_steps/model.py` stores HTML inside Python string literals with escaped quotes, for example:
 
-> No desktop hotkeys are assigned, to avoid conflicts with Anki shortcuts.
+```python
+<div class=\"keyboard-help\">...
+```
 
-Recommended apply method from repo root:
+This patch includes a robust script that removes both escaped and unescaped versions of:
+
+```html
+<div class="instructions">...</div>
+<div class="keyboard-help">...</div>
+```
+
+## Apply
+
+From the repository root:
 
 ```bash
-python3 remove_hotkey_text.py
+python3 remove_visible_card_text.py
+cp smoke_test.py scripts/smoke_test.py
 python3 scripts/smoke_test.py
 python3 scripts/build_release.py
 ```
@@ -15,8 +27,6 @@ python3 scripts/build_release.py
 Then commit:
 
 ```bash
-git add memory_steps/model.py
-git commit -m "Remove hotkey note from ladder player card"
+git add memory_steps/model.py scripts/smoke_test.py
+git commit -m "Remove helper text from ladder player card"
 ```
-
-The `.patch` file is also included if you prefer to apply it manually.

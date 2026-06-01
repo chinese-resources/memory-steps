@@ -1,0 +1,6 @@
+diff --git a/memory_steps/model.py b/memory_steps/model.py
+--- a/memory_steps/model.py
++++ b/memory_steps/model.py
+@@
+-        '<div class="keyboard-help">No desktop hotkeys are assigned, to avoid conflicts with Anki shortcuts.</div></div>'
++        '</div>'
