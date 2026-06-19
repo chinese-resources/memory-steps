@@ -29,8 +29,8 @@ def main():
         '@media (max-width:640px)',
         'max-height:calc(100vh - 300px)',
         '-webkit-overflow-scrolling:touch',
-        'Training mode</span><span class=\\"badge\\" id=\\"ms-count\\">Step 1 / 12',
-        "var mode='train', current=0",
+        'Recall mode</span><span class="badge" id="ms-count">Step 12 / 12',
+        "var mode='recall', current=11",
     ]:
         if needle not in model_text:
             fail(f'missing {needle}')

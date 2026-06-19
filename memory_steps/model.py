@@ -75,7 +75,7 @@ def _player_script():
   var steps=nodes.map(function(n){return {label:n.getAttribute('data-label')||'',html:n.innerHTML||''};});
   var answerNode=document.getElementById('ms-answer-source');
   var answerHtml=answerNode ? answerNode.innerHTML : (steps[0] ? steps[0].html : '');
-  var mode='train', current=0, checking=false, advanceAfterCheck=false;
+  var mode='recall', current=11, checking=false, advanceAfterCheck=false;
   var modeEl=document.getElementById('ms-mode'), countEl=document.getElementById('ms-count'), labelEl=document.getElementById('ms-label'), promptEl=document.getElementById('ms-prompt'), hintBtn=document.getElementById('ms-hint'), harderBtn=document.getElementById('ms-harder'), checkBtn=document.getElementById('ms-check');
   function clamp(n){return Math.max(0,Math.min(11,n));}
   function render(){
@@ -109,8 +109,8 @@ def _player_script():
 def front_template():
     return ('<div class="wrap"><div class="title">{{collection_title}}</div><div class="reference">{{label}}</div><div class="meta">{{memorization_mode}} · {{anchor_profile}}</div>'
         ''
-        '<div class="player" id="ms-player"><div class="player-top"><span class="badge" id="ms-mode">Training mode</span><span class="badge" id="ms-count">Step 1 / 12</span></div>'
-        '<div class="step-title" id="ms-label">{{step_1_label}}</div><div class="versebox {{layout_profile}}" id="ms-prompt">{{step_1}}</div>'
+        '<div class="player" id="ms-player"><div class="player-top"><span class="badge" id="ms-mode">Recall mode</span><span class="badge" id="ms-count">Step 12 / 12</span></div>'
+        '<div class="step-title" id="ms-label">{{step_12_label}}</div><div class="versebox {{layout_profile}}" id="ms-prompt">{{step_12}}</div>'
         '<div class="controls"><button type="button" class="ms-btn primary" id="ms-recall">Recall</button><button type="button" class="ms-btn primary" id="ms-train">Train</button><button type="button" class="ms-btn" id="ms-hint">Easier ←</button><button type="button" class="ms-btn" id="ms-harder">Next →</button><button type="button" class="ms-btn check" id="ms-check">Check</button></div>'
         '</div>'
         + _step_sources() + _fallback_hints() + _player_script() + '{{#front_context}}<div class="context"><b>Previous:</b><br>{{front_context}}</div>{{/front_context}}</div>')
@@ -135,4 +135,3 @@ def ensure_model(col):
     if existed: col.models.save(model)
     else: col.models.add(model)
     return model
-# Smoke-test compatibility marker: Training mode</span><span class=\"badge\" id=\"ms-count\">Step 1 / 12
