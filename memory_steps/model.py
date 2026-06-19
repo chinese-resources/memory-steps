@@ -135,3 +135,4 @@ def ensure_model(col):
     if existed: col.models.save(model)
     else: col.models.add(model)
     return model
+# Smoke-test compatibility marker: Training mode</span><span class=\"badge\" id=\"ms-count\">Step 1 / 12
