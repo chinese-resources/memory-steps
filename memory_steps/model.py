@@ -113,7 +113,7 @@ def front_template():
         '<div class="step-title" id="ms-label">{{step_12_label}}</div><div class="versebox {{layout_profile}}" id="ms-prompt">{{step_12}}</div>'
         '<div class="controls"><button type="button" class="ms-btn primary" id="ms-recall">Recall</button><button type="button" class="ms-btn primary" id="ms-train">Train</button><button type="button" class="ms-btn" id="ms-hint">Easier ←</button><button type="button" class="ms-btn" id="ms-harder">Next →</button><button type="button" class="ms-btn check" id="ms-check">Check</button></div>'
         '</div>'
-        + _step_sources() + _fallback_hints() + _player_script() + '{{#front_context}}<div class="context"><b>Previous:</b><br>{{front_context}}</div>{{/front_context}}</div>')
+        + '<div style="display:none" aria-hidden="true">' + _step_sources() + '</div>' + _fallback_hints() + _player_script() + '{{#front_context}}<div class="context"><b>Previous:</b><br>{{front_context}}</div>{{/front_context}}</div>')
 
 def back_template():
     return ('{{FrontSide}}<hr><div class="wrap"><div class="prompt-label">Answer / complete text</div><div class="versebox {{layout_profile}}">{{answer}}</div>{{#audio}}<div class="audio">{{audio}}</div>{{/audio}}'
